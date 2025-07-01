@@ -1,0 +1,93 @@
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Map Navigation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- Map View -->
+            <div class="view map-view" id="mapView">
+                <div class="header">
+                    <button class="back-btn" onclick="goBack()">←</button>
+                    <div class="title">Map</div>
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="map-container">
+                    <div class="map-grid"></div>
+                    
+                    <!-- Streets -->
+                    <div class="street street-h1"></div>
+                    <div class="street street-h2"></div>
+                    <div class="street street-v1"></div>
+                    <div class="street street-v2"></div>
+                    
+                    <!-- Pins -->
+                    <div class="pin pin-bin" onclick="showInfo('bin')">📍</div>
+                    <div class="pin pin-waste" onclick="showInfo('waste')">📍</div>
+                    
+                    <!-- Info Popups -->
+                    <div class="info-popup popup-bin" id="binPopup">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Bin #16</div>
+                        <div style="color: #666; font-size: 12px; margin-bottom: 8px;">Status: 60%</div>
+                        <button class="navigate-btn" onclick="startNavigation()">Navigate To ></button>
+                    </div>
+                    <div class="info-popup popup-waste" id="wastePopup">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Waste</div>
+                        <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Waiting to be picked...</div>
+                        <button class="navigate-btn" onclick="startNavigation()">Navigate To ></button>
+                    </div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-pin" style="background: #4CAF50;"></div>
+                        <span style="font-size: 12px;">Bin</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-pin" style="background: #f44336;"></div>
+                        <span style="font-size: 12px;">Waste</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation View -->
+            <div class="view nav-view" id="navView">
+                <div class="nav-header">
+                    <button class="back-btn" onclick="goBack()">←</button>
+                    <div class="nav-title">Navigate to waste</div>
+                    <div class="waste-icon">🗑️</div>
+                </div>
+                
+                <div class="direction-card" onclick="playDirectionSound()">
+                    <div class="direction-icon">↰</div>
+                    <div class="direction-text">
+                        <div class="direction-action">Turn Left</div>
+                        <div class="direction-distance">20 m</div>
+                    </div>
+                </div>
+
+                <div class="nav-map">
+                    <div class="current-location"></div>
+                    <div class="route-path"></div>
+                    <div class="destination"></div>
+                </div>
+
+                <div class="eta-card">
+                    <button class="cancel-btn" onclick="goBack()">✕</button>
+                    <div class="eta-info">
+                        <div class="eta-time">2 min</div>
+                        <div class="eta-details">16:03 • 0.9 km</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">🔊</button>
+
+    <script src="Main.js"></script>
+</body>
+</html>
