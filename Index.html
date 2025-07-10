@@ -1,93 +1,176 @@
-html<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile Map Navigation</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
+
+</head>
 </head>
 <body>
     <div class="phone-container">
         <div class="screen">
             <!-- Map View -->
-            <div class="view map-view" id="mapView">
+            <div class="map-view" id="mapView">
                 <div class="header">
-                    <button class="back-btn" onclick="goBack()">←</button>
-                    <div class="title">Map</div>
-                    <button class="search-btn">🔍</button>
+                    <div class="back-btn" onclick="goBack()">←</div>
+                    <h2>Map</h2>
+                    <div class="search-btn" onclick="toggleSearch()">🔍</div>
                 </div>
+                
                 <div class="map-container">
                     <div class="map-grid"></div>
                     
-                    <!-- Streets -->
-                    <div class="street street-h1"></div>
-                    <div class="street street-h2"></div>
-                    <div class="street street-v1"></div>
-                    <div class="street street-v2"></div>
+                    <div class="road road-1"></div>
+                    <div class="road road-2"></div>
+                    <div class="road road-3"></div>
+                    <div class="road road-"></div>
+                    <div class="road angled"></div>
+                    <div class="road angled-2"></div>
+
+
                     
-                    <!-- Pins -->
-                    <div class="pin pin-bin" onclick="showInfo('bin')">📍</div>
-                    <div class="pin pin-waste" onclick="showInfo('waste')">📍</div>
+                    <div class="bin-marker" onclick="showBinInfo()">🗑️</div>
+                    <div class="waste-marker" onclick="showWasteInfo()">🚮</div>
                     
-                    <!-- Info Popups -->
-                    <div class="info-popup popup-bin" id="binPopup">
-                        <div style="font-weight: 600; margin-bottom: 4px;">Bin #16</div>
-                        <div style="color: #666; font-size: 12px; margin-bottom: 8px;">Status: 60%</div>
-                        <button class="navigate-btn" onclick="startNavigation()">Navigate To ></button>
+                    <div class="info-popup bin-popup" id="binPopup">
+                        <strong>Bin #16</strong><br>
+                        Status: 60%<br>
+                        <button class="navigate-btn" onclick="startNavigation('bin')">Navigate To ></button>
                     </div>
-                    <div class="info-popup popup-waste" id="wastePopup">
-                        <div style="font-weight: 600; margin-bottom: 4px;">Waste</div>
-                        <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Waiting to be picked...</div>
-                        <button class="navigate-btn" onclick="startNavigation()">Navigate To ></button>
+                    
+                    <div class="info-popup waste-popup" id="wastePopup">
+                        <strong>Waste</strong><br>
+                        Waiting to be picked...<br>
+                        Waste Type: Plastic ♻️<br>
+                        
+                        <button class="navigate-btn" onclick="startNavigation('waste')">Navigate To ></button>
                     </div>
                 </div>
+                
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="legend-pin" style="background: #4CAF50;"></div>
-                        <span style="font-size: 12px;">Bin</span>
+                        <div class="legend-color" style="background: #27ae60;"></div>
+                        <span>Bin</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-pin" style="background: #f44336;"></div>
-                        <span style="font-size: 12px;">Waste</span>
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>Waste</span>
                     </div>
                 </div>
             </div>
 
+
+                         <!-- Search Overlay -->
+                <div class="search-overlay" id="searchOverlay">
+                    <div class="search-header">
+                        <button class="search-close" onclick="closeSearch()">✕</button>
+                        <h3>Search</h3>
+                        <div class="search-input-container">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search bins, waste, places..." oninput="handleSearch()" onkeypress="handleKeyPress(event)">
+                            <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-searches" id="recentSearches">
+                        <span>Recent:</span>
+                        <div class="recent-item" onclick="searchFor('Bin #16')">Bin #16</div>
+                        <div class="recent-item" onclick="searchFor('Waste pickup')">Waste pickup</div>
+                        <div class="recent-item" onclick="searchFor('Gas station')">Gas station</div>
+                    </div>
+                    
+                    <div class="search-suggestions" id="searchSuggestions">
+                        <div class="search-category">WASTE MANAGEMENT</div>
+                        <div class="search-item" onclick="selectSearchItem('bin', 'Bin #16')">
+                            <div class="search-icon bin">🗑️</div>
+                            <div class="search-details">
+                                <div class="search-title">Bin #16</div>
+                                <div class="search-subtitle">Main Street, Block A</div>
+                                <div class="search-distance">0.2 km away</div>
+                            </div>
+                            <div class="search-badge half">60%</div>
+                        </div>
+
+                        <div class="search-item" onclick="selectSearchItem('waste', 'Waste Collection Point')">
+                            <div class="search-icon waste">🚮</div>
+                            <div class="search-details">
+                                <div class="search-title">Waste Collection Point</div>
+                                <div class="search-subtitle">Central Plaza</div>
+                                <div class="search-distance">0.5 km away</div>
+                            </div>
+                            <div class="search-badge full">Waiting</div>
+                        </div>
+
+                        <div class="search-item" onclick="selectSearchItem('bin', 'Bin #23')">
+                            <div class="search-icon bin">🗑️</div>
+                            <div class="search-details">
+                                <div class="search-title">Bin #23</div>
+                                <div class="search-subtitle">Park Avenue</div>
+                                <div class="search-distance">0.8 km away</div>
+                            </div>
+                            <div class="search-badge empty">15%</div>
+                        </div>
+                    </div>
+
+                    <div class="search-loading" id="searchLoading">
+                        <div class="loading-spinner"></div>
+                        <span>Searching...</span>
+                    </div>    
+
+                    <div class="no-results" id="noResults">
+                        <div class="no-results-icon">🔍</div>
+                        <div>No results found</div>
+                        <div style="font-size: 12px; margin-top: 8px;">Try different keywords</div>
+                    </div>
+                </div>
+
             <!-- Navigation View -->
-            <div class="view nav-view" id="navView">
-                <div class="nav-header">
-                    <button class="back-btn" onclick="goBack()">←</button>
-                    <div class="nav-title">Navigate to waste</div>
-                    <div class="waste-icon">🗑️</div>
+            <div class="navigation-view" id="navigationView">
+                <div class="header">
+                    <div class="back-btn" onclick="goBackToMap()">←</div>
+                    <h2>Navigate to waste</h2>
+                    <div style="width: 40px;"></div>
                 </div>
                 
-                <div class="direction-card" onclick="playDirectionSound()">
-                    <div class="direction-icon">↰</div>
-                    <div class="direction-text">
-                        <div class="direction-action">Turn Left</div>
-                        <div class="direction-distance">20 m</div>
-                    </div>
+                <button class="audio-toggle" onclick="toggleAudio()">🔊</button>
+                        
+        <div class="direction-card">
+            <div class="direction-icon">↰</div>
+            <div class="direction-details">
+                <div class="direction-text">Turn Left</div>
+                <div class="direction-distance">10 m</div>
+        </div>
+    </div>
+        
+                <div class="speed-indicator">
+                    <div class="speed-value" id="speedValue">0</div>
+                    <div>km/h</div>
                 </div>
-
-                <div class="nav-map">
-                    <div class="current-location"></div>
-                    <div class="route-path"></div>
+                
+                <div class="map-container">
+                    <div class="map-grid"></div>
+                    
+                    <div class="route-line route-segment-1"></div>
+                    <div class="route-line route-segment-2"></div>
+                    <div class="route-line route-segment-3"></div>
+                    <div class="route-line route-segment-4"></div>
+                    
+                    <div class="car-icon"></div>
                     <div class="destination"></div>
+                    <div class="current-location"></div>
                 </div>
-
-                <div class="eta-card">
-                    <button class="cancel-btn" onclick="goBack()">✕</button>
-                    <div class="eta-info">
-                        <div class="eta-time">2 min</div>
-                        <div class="eta-details">16:03 • 0.9 km</div>
+                
+                <div class="trip-info">
+                    <div class="trip-details">
+                        <div class="trip-time">2 min</div>
+                        <div>16:03</div>
+                        <div class="trip-distance">0.9 km</div>
                     </div>
+                    <button class="cancel-btn" onclick="cancelNavigation()">✕</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">🔊</button>
-
     <script src="Main.js"></script>
 </body>
 </html>
